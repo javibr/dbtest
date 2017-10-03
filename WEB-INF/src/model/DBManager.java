@@ -41,40 +41,6 @@ public class DBManager implements AutoCloseable {
         connection = null;
     }
 
-
-
-    public boolean registerContact( String firstName, String lastname, String adress, String email,String phone) throws SQLException {
-        boolean success = false;
-        connection.setAutoCommit(false);
-        String q1 = "INSERT INTO contact (firstName, lastname, adress, email, phone) "
-                    + "VALUES (?, ?, ?, ?, ?)";
-
-        if (existeContact(email)) {
-            return false;
-        }
-        
-        try (PreparedStatement stmt = connection.prepareStatement(q1)) {
-            stmt.setString(1, firstName);
-            stmt.setString(2, lastname);
-            stmt.setString(3, adress);
-            stmt.setString(4, email);
-            stmt.setString(5, phone);
-
-            int numRows = stmt.executeUpdate();
-            if (numRows > 0) {
-                success = true;
-            }
-        } finally {
-            if (success) {
-                connection.commit();
-            } else {
-                connection.rollback();
-            }
-            connection.setAutoCommit(true);
-        }
-        return success;
-    }
-
      public boolean registerContact( contact contact) throws SQLException {
         boolean success = false;
         connection.setAutoCommit(false);
@@ -121,18 +87,6 @@ public class DBManager implements AutoCloseable {
         }
     }
 
-public boolean existeContact(String email) throws SQLException {
-        boolean existe = false;
-        String q = "SELECT * FROM contact WHERE email = ?";
-        
-        try (PreparedStatement stmt = connection.prepareStatement(q)) {
-            stmt.setString(1, email);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                existe = true;
-            }
-            return existe;
-        }
     }
 
    
